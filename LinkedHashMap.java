@@ -23,8 +23,7 @@ public class LinkedHashMap<K, V> {
 	}
 
 	public void put(K key, V value) {
-		if (key == null)
-			return;
+		if (key == null) return;
 		boolean replace = false;
 		int hash = hash(key);
 		Entry<K, V> newEntry = new Entry<K, V>(key, value, null);
