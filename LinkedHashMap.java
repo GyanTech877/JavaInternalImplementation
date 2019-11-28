@@ -17,12 +17,10 @@ public class LinkedHashMap<K,V> {
       this.next=next;
     }   
   }
-  public LinkedHashMap()
-  {
+  public LinkedHashMap() {
     buckets=new Entry[capacity];    
   }
-  public void put(K key,V value)
-  {
+  public void put(K key,V value) {
     if(key==null) return;
     boolean replace=false;
     int hash=hash(key);
@@ -46,5 +44,80 @@ public class LinkedHashMap<K,V> {
     }
     if(replace==false)
     insertInList(newEntry);
+  }
+  private void insertInList(Entry<K,V> newEntry) {
+    if(head==tail){
+      head=newEntry;
+      tail=newEntry;
+    }
+    else{
+      tail.after=newEntry;
+      newEntry.before=tail;
+      tail=newEntry;
+    }
+  }
+  public V get(K key){
+       int hash=hash(key);
+       Entry<K,V> curr=buckets[hash];
+       while(curr!=null)
+         {
+           if(curr.key.equals(key))
+            {
+              return curr.value;
+            }
+            curr=curr.next;
+         }
+        return null;
+   }
+  
+  public void print() {
+          Entry<K,V>curr=head;
+          while(curr!=null)
+           {
+             System.out.println("key is "+ curr.key+"val is "+ curr.value+"->");   
+             curr=curr.after;
+           }
+   }
+  private int hash(K key){
+            return Math.abs(key.hashCode()) % capacity;
+   }
+  public void deleteAll() {
+         head=null;
+         tail=null;
+        for(int i=0;i<capacity;i++) {
+                buckets[i]=null;
+            }   
+  }
+  public void remove(K key) {
+         int hash=hash(key);
+         Entry<K,V>curr=buckets[hash];
+         if(curr==null) return;
+         Entry<K,V>p=null;
+         Entry<K,V>n;
+         while(curr!=null) {
+           n=curr.next;
+           if(curr.key.equals(key)) {
+           if(p==null)  buckets[hash]=buckets[hash].next;
+           else  p.next=n;
+           adjustList(curr);
+           break;
+          }
+           p=curr;
+           curr=n;
+        }
+    }
+  private void adjustList(Entry<K,V> curr){
+    if(curr==head) {
+       head=head.after;
+       if(head==null) tail=null;
+    }
+    else if (curr==tail) {
+       tail=tail.before;
+       tail.after=null;
+    }
+    else  {
+       curr.before.after=curr.after;
+       curr.after.before=curr.before;
+   }
   }
 }
